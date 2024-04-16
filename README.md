@@ -20,6 +20,15 @@ Arduino library for DAC8571 I2C 16 bit DAC.
 
 The DAC8571 is a small low-power, 16-bit voltage Power-On Reset to Zero output DAC.
 
+The DAC8571 has one 16 bit DAC. The output value can be set from 0..65535.
+This results in a voltage which depends on a reference voltage Vref (datasheet).
+
+The DAC8571 has a temporary register in which a value can be preloaded to be used later.
+This can be used to change the DAC at a later moment.
+
+**Not supported** is the broadcast function to change multiple DAC8571 
+(and compatibles) at the same moment. 
+ 
 
 #### Compatibles
 
@@ -84,34 +93,68 @@ Returns **true** if successful.
 - **uint8_t getAddress()** returns address set in constructor.
 
 
-#### CORE
+#### Core
 
-The DAC8571 has one 16 bit DAC. Output value 0..65535 == 0..Vref Volts (datasheet).
+The DAC8571 has one 16 bit DAC. The output value can be set from 0..65535.
 
 - **bool write(uint16_t value = 0)** writes a value 0..65535 to the DAC.
 - **uint16_t lastWrite()** get last value written from cache (fast).
 - **uint16_t read()** get last written value from device.
 
 
-#### MODI
+#### Write modi
 
 The DAC8571 can be written in different modi (datasheet page 19).
-Not all modi are supported yet, these need testing.  
+Not all modi are supported yet, these need testing.
+
+- **void setWriteMode(uint8_t mode = DAC8571_MODE_NORMAL)**
+- **uint8_t getWriteMode()**
+
+
 Setting the mode will be applied for all writes until mode is changed.
 
-|  mode  |  support  |  meaning  |
-|:------:|:---------:|:----------|
-|   0    |     Y     |  store value in temporary register. preparation for (2, 3 and 4)
-|   1    |  default  |  update DAC with value written.
-|   2    |     Y     |  writes the temporary register to DAC, ignores new value.
-|   3    |     N     |  broadcast update. Not supported yet.
-|   4    |     N     |  broadcast update. Not supported yet.
-| other  |     Y     |  maps unto default mode 1.
+|  mode                    |  meaning  |
+|:-------------------------|:----------|
+| DAC8571_MODE_STORE_CACHE |  store value in temporary register. Preparation for (2, 3 and 4)
+| DAC8571_MODE_NORMAL      |  update DAC with value written. **DEFAULT**.
+| DAC8571_MODE_WRITE_CACHE |  writes the temporary register to DAC, ignores new value.
+| DAC8571_MODE_BRCAST_0    |  broadcast update. **Not supported yet**. See below.
+| DAC8571_MODE_BRCAST_1    |  broadcast update. **Not supported yet**. See below.
+| DAC8571_MODE_BRCAST_2    |  broadcast update. **Not supported yet**. See below.
+| other                    |  maps onto default **DAC8571_MODE_NORMAL**.
 
 
 #### Broadcast mode
 
-TO INVESTIGATE (page 19)
+Not supported yet.
+
+Different ways possible, need to investigate API. (page 19)
+
+Three broadcast commands exists:
+
+|  mode                    |  meaning  |
+|:-------------------------|:----------|
+| DAC8571_MODE_BRCAST_0    | Load all devices from temporary register
+| DAC8571_MODE_BRCAST_1    | Load all devices with data.
+| DAC8571_MODE_BRCAST_2    | Power down all devices
+
+
+
+#### Power Down mode
+
+Not supported yet.
+
+Different ways possible, need to investigate API. (page 20)
+
+Mixes also with broadcast, simple API first.
+
+
+#### Write multiple values - High speed mode.
+
+Not supported yet.
+
+Should be something like 
+- **void write(uint16_t arr[n], uint8_t length)**
 
 
 #### Error codes
@@ -122,16 +165,8 @@ After the read the error value is reset to OK.
 |  Error code             |  Value  |  Notes  |
 |:------------------------|:-------:|:--------|
 |  DAC8571_OK             |  0x00   |
-|  DAC8571_PIN_ERROR      |  0x81   |
-|  DAC8571_I2C_ERROR      |  0x82   |
-|  DAC8571_MODE_ERROR     |  0x83   |
-|  DAC8571_CHANNEL_ERROR  |  0x84   |
-|  DAC8571_ADDRESS_ERROR  |  0x85   |
-
-
-## Operations
-
-See examples.
+|  DAC8571_I2C_ERROR      |  0x81   |
+|  DAC8571_ADDRESS_ERROR  |  0x82   |
 
 
 ## Future
@@ -141,6 +176,7 @@ See examples.
 - improve documentation
 - test with hardware
 - test different write modi 
+- Support Power Down (minimal version first)
 
 
 #### Should
@@ -148,12 +184,13 @@ See examples.
 - add examples
   - demo, wire1, etc
   - Wire1
+- implement High Speed mode (max 8 values)
 - replace magic numbers
-
+- investigate more complex power down scenarios.
 
 #### Could
 
-- investigate broadcast support
+- investigate broadcast support.
 
 
 #### Wont
