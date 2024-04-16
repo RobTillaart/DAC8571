@@ -12,13 +12,13 @@
 #include "Wire.h"
 
 
-#define DAC8571_LIB_VERSION                 (F("0.1.0"))
+#define DAC8571_LIB_VERSION         (F("0.1.0"))
 
 //  ERROR CODES
-#define DAC8571_OK                          0x00
-#define DAC8571_I2C_ERROR                   0x81
-#define DAC8571_ADDRESS_ERROR               0x82
-#define DAC8571_BUFFER_ERROR                0x83
+#define DAC8571_OK                  0x00
+#define DAC8571_I2C_ERROR           0x81
+#define DAC8571_ADDRESS_ERROR       0x82
+#define DAC8571_BUFFER_ERROR        0x83
 
 
 //  WRITE MODI
@@ -28,6 +28,12 @@
 #define DAC8571_MODE_BRCAST_0       0x03     //  not supported.
 #define DAC8571_MODE_BRCAST_1       0x04     //  not supported.
 #define DAC8571_MODE_BRCAST_2       0x05     //  not supported.
+
+
+//  VALUES
+#define DAC8571_VALUE_MIN           0x0000
+#define DAC8571_VALUE_MIDDLE        0x8000
+#define DAC8571_VALUE_MAX           0xFFFF
 
 
 class DAC8571

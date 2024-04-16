@@ -168,7 +168,7 @@ uint8_t DAC8571::getWriteMode()
 //
 void DAC8571::powerDown(uint8_t pMode)
 {
-  //  overwrite parameter for now. TODO.
+  //  overwrite parameter for now.
   //  table 6, page 22.
   pMode = 0;
   _control = 0x11;

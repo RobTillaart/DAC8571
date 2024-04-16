@@ -34,32 +34,51 @@ As said the library is experimental need to be tested with hardware.
 Feedback is always welcome, please open an issue.
 
 
-#### Compatibles
+#### Settling time
 
-TODO
+From datasheet page 24.
+
+Settling time to within the 16-bit accurate range of the DAC8571 is achievable within 
+10 μs for a full-scale code change at the input. 
+Worst case settling times between consecutive code changes is typically less than 2 μs,
+therefore, the update rate is limited by the I2C interface.
 
 
 ## I2C
 
 #### Address
 
+The DAC8571 support 2 addresses by means of an A0 address pin.
+
+
 |  Address  |   A0   |
 |:---------:|:------:|
 |   0x4C    |   LOW  |
 |   0x4E    |  HIGH  |
 
+It might be possible to connect this address pin to an IO pin
+and keep only one HIGH and remaining LOW to support many devices.
+This is not tested, feedback welcome.
+
 
 #### I2C performance
 
-TODO extend table (see example)
+Extend table, use output of **DAC8571_performance.ino**
 
-Time in microseconds.
+Time in microseconds.  
+array == write(array, length)
+Assumption all write modi have similar performance.
 
-|  speed  |  function  |  time  |  notes  |
-|:-------:|:----------:|:------:|:-------:|
-| 100000  |  write()   |        |
-| 100000  |  read()    |        |
+Tested on Arduino UNO.
 
+|  Speed   |  function  |  time  |  notes  |
+|:--------:|:----------:|:------:|:-------:|
+|  100000  |  write()   |        |
+|  100000  |  read()    |        |
+|  200000  |  write()   |        |
+|  200000  |  read()    |        |
+|  400000  |  write()   |        |
+|  400000  |  read()    |        |
 
 
 #### I2C multiplexing
@@ -129,7 +148,7 @@ Not all modi are supported yet, these need testing.
 
 Setting the mode will be applied for all writes until mode is changed.
 
-|  mode                    |  meaning  |
+|  Mode                    |  Meaning  |
 |:-------------------------|:----------|
 | DAC8571_MODE_STORE_CACHE |  store value in temporary register. Preparation for (2, 3 and 4)
 | DAC8571_MODE_NORMAL      |  update DAC with value written. **DEFAULT**.
@@ -142,72 +161,74 @@ Setting the mode will be applied for all writes until mode is changed.
 
 #### Broadcast mode
 
-Not supported yet.
+**Not supported yet**
 
 Different ways possible, need to investigate API. (page 19)
 
 Three broadcast commands exists:
 
-|  mode                    |  meaning  |
-|:-------------------------|:----------|
-| DAC8571_MODE_BRCAST_0    | Load all devices from temporary register
-| DAC8571_MODE_BRCAST_1    | Load all devices with data.
-| DAC8571_MODE_BRCAST_2    | Power down all devices
+|  Mode                   |  Meaning  |
+|:------------------------|:----------|
+|  DAC8571_MODE_BRCAST_0  | Load all devices from temporary register
+|  DAC8571_MODE_BRCAST_1  | Load all devices with data.
+|  DAC8571_MODE_BRCAST_2  | Power down all devices
 
 
 #### Power Down mode
 
 Different ways possible, need to investigate API. (table 6, page 22)  
-Mixes also with broadcast, simple API first.
+Mixes also with broadcast ==> complex API.
+
+Minimal interface is implemented to support default mode.
 
 - **void powerDown(uint8_t pMode = 0)** default power down only for now.
-- **void wakeUp(uint16_t value = 0)** wake up, value set to zero.
+- **void wakeUp(uint16_t value = 0)** wake up, value set to zero by default.
 
 
 #### Write multiple values - High speed mode.
 
-Write a buffer with max 14 values in one I2C call.
 The maximum length depends on the internal I2C BUFFER of the board.
 For Arduino this is typical 32 bytes so it allows 14 values.
 
-- **void write(uint16_t arr[n], uint8_t length)**
+- **void write(uint16_t arr[n], uint8_t length)** Writes a buffer with 
+max 14 values in one I2C call. 
+The last value written will be remembered in **lastWrite()**.
 
 
 #### Error codes
 
-- **int lastError()** always check this value after a read / write to see if it was OK (== 0).
-After the read the error value is reset to OK.
+- **int lastError()** always check this value after a read / write 
+to see if it was DAC8571_OK.
+After the call to **lastError()** the error value is reset to DAC8571_OK.
 
 |  Error code             |  Value  |  Notes  |
 |:------------------------|:-------:|:--------|
 |  DAC8571_OK             |  0x00   |
 |  DAC8571_I2C_ERROR      |  0x81   |
 |  DAC8571_ADDRESS_ERROR  |  0x82   |
-|  DAC8571_BUFFER_ERROR   |  0x83   |
+|  DAC8571_BUFFER_ERROR   |  0x83   |  write(arr, length) length error
+
 
 ## Future
 
 #### Must
 
-- get hardware to test.
+- get hardware to test
 - improve documentation
-- fix TODO's (or remove them)
-- test different write modi 
-- Support Power Down (default mode first)
-
+- test different write modi
 
 #### Should
 
-- add examples
-  - demo, wire1, etc
-  - Wire1
-- replace magic numbers
 - implement more power down modes. (table 6, page 22)
+- extend performance table
+- replace magic numbers
 
 #### Could
 
-- investigate broadcast support.
-
+- add examples
+- investigate broadcast support
+- investigate known compatibles
+  - including SPI versions?
 
 #### Wont
 
