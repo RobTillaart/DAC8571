@@ -49,17 +49,20 @@ unittest_teardown()
 unittest(test_constants)
 {
   assertEqual(DAC8571_OK           , 0x00);
-  assertEqual(DAC8571_PIN_ERROR    , 0x81);
-  assertEqual(DAC8571_I2C_ERROR    , 0x82);
-  assertEqual(DAC8571_MODE_ERROR   , 0x83);
-  assertEqual(DAC8571_CHANNEL_ERROR, 0x84);
-  assertEqual(DAC8571_ADDRESS_ERROR, 0x85);
+  assertEqual(DAC8571_I2C_ERROR    , 0x81);
+  assertEqual(DAC8571_ADDRESS_ERROR, 0x82);
+  
+  assertEqual(DAC8571_MODE_STORE_CACHE, 0x00);
+  assertEqual(DAC8571_MODE_NORMAL     , 0x01);
+  assertEqual(DAC8571_MODE_WRITE_CACHE, 0x02);
+  assertEqual(DAC8571_MODE_BRCAST_0   , 0x03);
+  assertEqual(DAC8571_MODE_BRCAST_1   , 0x04);
 }
 
 
 unittest(test_constructor)
 {
-  DAC8571 dev(0x48);
+  DAC8571 dev(0x4C);
 
   Wire.begin();
 
@@ -68,20 +71,6 @@ unittest(test_constructor)
   assertTrue(dev.isConnected());
   assertEqual(0, dev.lastWrite());
   assertEqual(DAC8571_OK, dev.lastError());
-}
-
-unittest(test_DAC)
-{
-  DAC8571 dev(0x48);
-
-  Wire.begin();
-  assertTrue(dev.begin());
-
-  assertFalse(dev.isDACEnabled());
-  dev.enableDAC();
-  assertTrue(dev.isDACEnabled());
-  dev.disableDAC();
-  assertFalse(dev.isDACEnabled());
 }
 
 
