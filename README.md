@@ -155,19 +155,16 @@ Three broadcast commands exists:
 | DAC8571_MODE_BRCAST_2    | Power down all devices
 
 
-
 #### Power Down mode
 
-Not supported yet.
-
-Different ways possible, need to investigate API. (page 20)
-
+Different ways possible, need to investigate API. (table 6, page 22)  
 Mixes also with broadcast, simple API first.
+
+- **void powerDown(uint8_t pMode = 0)** default power down only for now.
+- **void wakeUp(uint16_t value = 0)** wake up, value set to zero.
 
 
 #### Write multiple values - High speed mode.
-
-(not tested)
 
 Write a buffer with max 14 values in one I2C call.
 The maximum length depends on the internal I2C BUFFER of the board.
@@ -194,9 +191,9 @@ After the read the error value is reset to OK.
 
 - get hardware to test.
 - improve documentation
-- test with hardware
+- fix TODO's (or remove them)
 - test different write modi 
-- Support Power Down (minimal version first)
+- Support Power Down (default mode first)
 
 
 #### Should
@@ -205,7 +202,7 @@ After the read the error value is reset to OK.
   - demo, wire1, etc
   - Wire1
 - replace magic numbers
-- investigate more complex power down scenarios.
+- implement more power down modes. (table 6, page 22)
 
 #### Could
 

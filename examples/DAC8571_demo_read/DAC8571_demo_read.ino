@@ -1,7 +1,7 @@
 //
-//    FILE: DAC8571_demo.ino
+//    FILE: DAC8571_demo_read.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: demo
+// PURPOSE: demo read()
 //     URL: https://github.com/RobTillaart/DAC8571
 
 

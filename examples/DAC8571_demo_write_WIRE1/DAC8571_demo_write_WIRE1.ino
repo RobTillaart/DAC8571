@@ -1,13 +1,13 @@
 //
-//    FILE: DAC8571_demo_write.ino
+//    FILE: DAC8571_demo_write_WIRE1.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: demo write(value)
+// PURPOSE: demo Wire1
 //     URL: https://github.com/RobTillaart/DAC8571
 
 
 #include "DAC8571.h"
 
-DAC8571 dev(0x4C);
+DAC8571 dev(0x4C, &Wire1);
 
 
 void setup()

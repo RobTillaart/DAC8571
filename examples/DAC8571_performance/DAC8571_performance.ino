@@ -1,7 +1,7 @@
 //
 //    FILE: DAC8571_performance.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: demo
+// PURPOSE: performance measurement I2C speed.
 //     URL: https://github.com/RobTillaart/DAC8571
 //
 // NOTE: output is written in markdown format of a table

@@ -103,6 +103,9 @@ uint16_t DAC8571::read()
     _error = DAC8571_I2C_ERROR;
     return 0;
   }
+  //  keep compiler happy.
+  if (control == 0) _error = DAC8571_OK;
+  _error = DAC8571_OK;
   uint16_t value = highByte * 256 + lowByte;
   return value;
 }
@@ -137,7 +140,6 @@ bool DAC8571::write(uint16_t * arr, uint8_t length)
 }
 
 
-
 //////////////////////////////////////////////////////////
 //
 //  MODE PART
@@ -157,6 +159,27 @@ uint8_t DAC8571::getWriteMode()
 {
   uint8_t mode = (_control >> 4) & 0x03;
   return mode;
+}
+
+
+//////////////////////////////////////////////////////////
+//
+//  POWER DOWN PART
+//
+void DAC8571::powerDown(uint8_t pMode)
+{
+  //  overwrite parameter for now. TODO.
+  //  table 6, page 22.
+  pMode = 0;
+  _control = 0x11;
+  write(0);
+}
+
+
+void DAC8571::wakeUp(uint16_t value)
+{
+  _control = 0x10;
+  write(value);
 }
 
 

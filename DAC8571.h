@@ -54,6 +54,10 @@ public:
   void     setWriteMode(uint8_t mode = DAC8571_MODE_NORMAL);
   uint8_t  getWriteMode();  // 0..4  from last write (cached)
 
+  //       POWER DOWN
+  void     powerDown(uint8_t pMode = 0);  //  default PD mode
+  void     wakeUp(uint16_t value = 0);    //  wake up, default with value zero.
+
   //       ERROR HANDLING
   int      lastError();
 

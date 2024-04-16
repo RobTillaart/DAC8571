@@ -1,7 +1,7 @@
 //
-//    FILE: DAC8571_demo.ino
+//    FILE: DAC8571_demo_write_array.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: demo
+// PURPOSE: demo write(arr, length)
 //     URL: https://github.com/RobTillaart/DAC8571
 
 
