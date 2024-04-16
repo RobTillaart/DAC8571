@@ -22,13 +22,17 @@ The DAC8571 is a small low-power, 16-bit voltage Power-On Reset to Zero output D
 
 The DAC8571 has one 16 bit DAC. The output value can be set from 0..65535.
 This results in a voltage which depends on a reference voltage Vref (datasheet).
+At power up it always will start with a value of zero.
 
-The DAC8571 has a temporary register in which a value can be preloaded to be used later.
+The DAC8571 has a temporary register in which a value can be preloaded.
 This can be used to change the DAC at a later moment.
 
 **Not supported** is the broadcast function to change multiple DAC8571 
-(and compatibles) at the same moment. 
- 
+(and compatibles) at the same moment by using this temporary register.
+
+As said the library is experimental need to be tested with hardware.
+Feedback is always welcome, please open an issue.
+
 
 #### Compatibles
 
@@ -39,11 +43,23 @@ TODO
 
 #### Address
 
-
 |  Address  |   A0   |
 |:---------:|:------:|
 |   0x4C    |   LOW  |
 |   0x4E    |  HIGH  |
+
+
+#### I2C performance
+
+TODO extend table (see example)
+
+Time in microseconds.
+
+|  speed  |  function  |  time  |  notes  |
+|:-------:|:----------:|:------:|:-------:|
+| 100000  |  write()   |        |
+| 100000  |  read()    |        |
+
 
 
 #### I2C multiplexing
@@ -151,9 +167,12 @@ Mixes also with broadcast, simple API first.
 
 #### Write multiple values - High speed mode.
 
-Not supported yet.
+(not tested)
 
-Should be something like 
+Write a buffer with max 14 values in one I2C call.
+The maximum length depends on the internal I2C BUFFER of the board.
+For Arduino this is typical 32 bytes so it allows 14 values.
+
 - **void write(uint16_t arr[n], uint8_t length)**
 
 
@@ -167,12 +186,13 @@ After the read the error value is reset to OK.
 |  DAC8571_OK             |  0x00   |
 |  DAC8571_I2C_ERROR      |  0x81   |
 |  DAC8571_ADDRESS_ERROR  |  0x82   |
-
+|  DAC8571_BUFFER_ERROR   |  0x83   |
 
 ## Future
 
 #### Must
 
+- get hardware to test.
 - improve documentation
 - test with hardware
 - test different write modi 

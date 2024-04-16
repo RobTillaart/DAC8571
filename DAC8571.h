@@ -18,6 +18,7 @@
 #define DAC8571_OK                          0x00
 #define DAC8571_I2C_ERROR                   0x81
 #define DAC8571_ADDRESS_ERROR               0x82
+#define DAC8571_BUFFER_ERROR                0x83
 
 
 //  WRITE MODI
@@ -44,6 +45,10 @@ public:
   bool     write(uint16_t value = 0);  //  returns true on success.
   uint16_t lastWrite();   //  returns last successful write from cache.
   uint16_t read();        //  returns last successful write from device.
+
+  //       length is max 6 (depends on internal I2C BUFFER; to be investigated)
+  //       to be used to do a fast pulse or ramp up.
+  bool     write(uint16_t * arr, uint8_t length);  //  returns true on success.
 
   //       MODE (see defines above)
   void     setWriteMode(uint8_t mode = DAC8571_MODE_NORMAL);

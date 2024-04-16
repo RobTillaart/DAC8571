@@ -108,6 +108,36 @@ uint16_t DAC8571::read()
 }
 
 
+bool DAC8571::write(uint16_t * arr, uint8_t length)
+{
+  if (length > 14)
+  {
+    _error = DAC8571_BUFFER_ERROR;
+    return false;
+  }
+  _wire->beginTransmission(_address);
+  _wire->write(_control);
+  for (int i = 0; i < length; i++)
+  {
+    uint8_t lowByte = arr[i] & 0xFF;
+    uint8_t highByte = arr[i] >> 8;
+    _wire->write(highByte);
+    _wire->write(lowByte);
+  }
+  _error = _wire->endTransmission();
+
+  if (_error != 0)
+  {
+    _error = DAC8571_I2C_ERROR;
+    return false;
+  }
+  _error = DAC8571_OK;
+  _dac = arr[length - 1];
+  return true;
+}
+
+
+
 //////////////////////////////////////////////////////////
 //
 //  MODE PART

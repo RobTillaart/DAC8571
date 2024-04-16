@@ -57,6 +57,7 @@ unittest(test_constants)
   assertEqual(DAC8571_MODE_WRITE_CACHE, 0x02);
   assertEqual(DAC8571_MODE_BRCAST_0   , 0x03);
   assertEqual(DAC8571_MODE_BRCAST_1   , 0x04);
+  assertEqual(DAC8571_MODE_BRCAST_2   , 0x05);
 }
 
 
