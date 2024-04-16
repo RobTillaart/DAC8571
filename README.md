@@ -204,7 +204,6 @@ After the read the error value is reset to OK.
 - add examples
   - demo, wire1, etc
   - Wire1
-- implement High Speed mode (max 8 values)
 - replace magic numbers
 - investigate more complex power down scenarios.
 
