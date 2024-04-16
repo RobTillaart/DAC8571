@@ -86,12 +86,16 @@ uint16_t DAC8571::lastWrite()
 
 uint16_t DAC8571::read()
 {
-  uint8_t n = _wire.requestFrom(_address, 3);
+  uint8_t highByte = 0;
+  uint8_t lowByte  = 0;
+  uint8_t control  = 0;
+
+  uint8_t n = _wire->requestFrom(_address, uint8_t(3));
   if (n == 3)
   {
-    uint8_t highByte = _wire->read();
-    uint8_t lowByte  = _wire->read();
-    uint8_t control  = _wire->read();  //  not used.
+    highByte = _wire->read();
+    lowByte  = _wire->read();
+    control  = _wire->read();  //  not used.
     _error = DAC8571_OK;
   }
   else

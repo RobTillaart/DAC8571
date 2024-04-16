@@ -1,5 +1,4 @@
 //
-//
 //    FILE: DAC8571_performance.ino
 //  AUTHOR: Rob Tillaart
 // PURPOSE: demo
@@ -36,7 +35,6 @@ void setup()
   delay(100);
 
   test1();
-  test2();
 }
 
 
@@ -59,28 +57,6 @@ void test1()
     Wire.setClock(clk);
     test_DAC();
     delay(10);
-    test_ADC();
-    delay(10);
-    Serial.println(" |");
-  }
-  Serial.println();
-}
-
-
-void test2()
-{
-  Serial.println(F("| - Wire clock KHz - | - write() OK% - | - read() OK% - |"));
-  Serial.println(F("|:----:|:----:|:----:|"));
-  for (uint8_t i = 1; i < 14; i++)
-  {
-    uint32_t clk = 50000UL * i;
-    Serial.print("| ");
-    Serial.print(clk / 1000);
-    Wire.setClock(clk);
-    test_DAC_error();
-    delay(10);
-    test_ADC_error();
-    delay(10);
     Serial.println(" |");
   }
   Serial.println();
@@ -89,63 +65,15 @@ void test2()
 
 void test_DAC()
 {
-  dev.enableDAC();
   start = micros();
-  for (int i = 0; i < 1000; i++)
+  for (uint16_t i = 0; i < 1000; i++)
   {
-    uint8_t val = i % 127;
+    uint16_t val = i;
     dev.write(val);
-  }
-  stop = micros();
-  dev.disableDAC();
-  Serial.print(" | ");
-  Serial.print((stop - start) * 0.001);
-}
-
-
-void test_ADC()
-{
-  volatile uint8_t x = 0;
-  start = micros();
-  for (int i = 0; i < 1000; i++)
-  {
-    x = dev.read(2);
   }
   stop = micros();
   Serial.print(" | ");
   Serial.print((stop - start) * 0.001);
-  if (x == 255) return;      //  keep build CI happy
-}
-
-
-void test_DAC_error()
-{
-  float perc = 0;
-  dev.enableDAC();
-  for (int i = 0; i < 1000; i++)
-  {
-    uint8_t val = i % 127;
-    dev.write(val);
-    if (dev.lastError() == DAC8571_OK) perc += 0.1;
-  }
-  dev.disableDAC();
-  Serial.print(" | ");
-  Serial.print(perc);
-}
-
-
-void test_ADC_error()
-{
-  float perc = 0;
-  volatile uint8_t x = 0;
-  for (int i = 0; i < 1000; i++)
-  {
-    x = dev.read(2);
-    if (dev.lastError() == DAC8571_OK) perc += 0.1;
-  }
-  Serial.print(" | ");
-  Serial.print(perc);
-  if (x == 255) return;      //  keep build CI happy
 }
 
 
