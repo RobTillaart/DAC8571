@@ -3,7 +3,7 @@
 //    FILE: DAC8571.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 2024-04-16
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: Arduino library for DAC8571 I2C 16 bit DAC.
 //     URL: https://github.com/RobTillaart/DAC8571
 
@@ -11,8 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-
-#define DAC8571_LIB_VERSION         (F("0.1.0"))
+#define DAC8571_LIB_VERSION         (F("0.1.1"))
 
 //  ERROR CODES
 #define DAC8571_OK                  0x00
@@ -30,10 +29,20 @@
 #define DAC8571_MODE_BRCAST_2       0x05     //  not supported.
 
 
-//  VALUES
-#define DAC8571_VALUE_MIN           0x0000
-#define DAC8571_VALUE_MIDDLE        0x8000
-#define DAC8571_VALUE_MAX           0xFFFF
+//  DAC VALUES
+#define DAC8571_VALUE_MIN           0x0000   //  0%
+#define DAC8571_VALUE_Q1            0x4000   //  25%
+#define DAC8571_VALUE_MIDDLE        0x8000   //  50%
+#define DAC8571_VALUE_Q3            0xC000   //  75%
+#define DAC8571_VALUE_MAX           0xFFFF   //  100%
+
+
+//  POWER DOWN MODI
+#define DAC8571_PD_LOW_POWER        0x00
+#define DAC8571_PD_FAST             0x01
+#define DAC8571_PD_1_KOHM           0x02
+#define DAC8571_PD_100_KOHM         0x03
+#define DAC8571_PD_HI_Z             0x04
 
 
 class DAC8571
@@ -42,13 +51,13 @@ public:
   explicit DAC8571(uint8_t address = 0x4C, TwoWire *wire = &Wire);
 
   //       set initial value for DAC, default 0
-  bool     begin(uint16_t value = 0);
+  bool     begin(uint16_t value = DAC8571_VALUE_MIN);
   bool     isConnected();
   //       convenience
   uint8_t  getAddress();
 
   //       DAC
-  bool     write(uint16_t value = 0);  //  returns true on success.
+  bool     write(uint16_t value);  //  returns true on success.
   uint16_t lastWrite();   //  returns last successful write from cache.
   uint16_t read();        //  returns last successful write from device.
 
@@ -56,15 +65,19 @@ public:
   //       to be used to do a fast pulse or ramp up.
   bool     write(uint16_t * arr, uint8_t length);  //  returns true on success.
 
-  //       MODE (see defines above)
+  //       PERCENTAGE WRAPPER
+  void     setPercentage(float percentage);
+  float    getPercentage();
+
+  //       WRITE MODE (see defines above)
   void     setWriteMode(uint8_t mode = DAC8571_MODE_NORMAL);
   uint8_t  getWriteMode();  // 0..4  from last write (cached)
 
-  //       POWER DOWN
-  void     powerDown(uint8_t pMode = 0);  //  default PD mode
-  void     wakeUp(uint16_t value = 0);    //  wake up, default with value zero.
+  //       POWER DOWN (see defines above)
+  void     powerDown(uint8_t pdMode = DAC8571_PD_LOW_POWER);
+  void     wakeUp(uint16_t value = DAC8571_VALUE_MIN);
 
-  //       ERROR HANDLING
+  //       ERROR HANDLING (see defines above)
   int      lastError();
 
 
