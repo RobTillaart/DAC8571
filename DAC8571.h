@@ -24,17 +24,18 @@
 #define DAC8571_MODE_STORE_CACHE    0x00
 #define DAC8571_MODE_NORMAL         0x01
 #define DAC8571_MODE_WRITE_CACHE    0x02
+//  broadcast modes need more investigation
 #define DAC8571_MODE_BRCAST_0       0x03     //  not supported.
 #define DAC8571_MODE_BRCAST_1       0x04     //  not supported.
 #define DAC8571_MODE_BRCAST_2       0x05     //  not supported.
 
 
-//  DAC VALUES
-#define DAC8571_VALUE_MIN           0x0000   //  0%
-#define DAC8571_VALUE_Q1            0x4000   //  25%
-#define DAC8571_VALUE_MIDDLE        0x8000   //  50%
-#define DAC8571_VALUE_Q3            0xC000   //  75%
-#define DAC8571_VALUE_MAX           0xFFFF   //  100%
+//  DAC VALUES (percentages)
+#define DAC8571_VALUE_00            0x0000
+#define DAC8571_VALUE_25            0x4000
+#define DAC8571_VALUE_50            0x8000
+#define DAC8571_VALUE_75            0xC000
+#define DAC8571_VALUE_100           0xFFFF
 
 
 //  POWER DOWN MODI
@@ -51,7 +52,7 @@ public:
   explicit DAC8571(uint8_t address = 0x4C, TwoWire *wire = &Wire);
 
   //       set initial value for DAC, default 0
-  bool     begin(uint16_t value = DAC8571_VALUE_MIN);
+  bool     begin(uint16_t value = DAC8571_VALUE_00);
   bool     isConnected();
   //       convenience
   uint8_t  getAddress();
@@ -61,7 +62,7 @@ public:
   uint16_t lastWrite();   //  returns last successful write from cache.
   uint16_t read();        //  returns last successful write from device.
 
-  //       length is max 6 (depends on internal I2C BUFFER; to be investigated)
+  //       length is max 14 (depends on internal I2C BUFFER; to be investigated)
   //       to be used to do a fast pulse or ramp up.
   bool     write(uint16_t * arr, uint8_t length);  //  returns true on success.
 
@@ -75,7 +76,7 @@ public:
 
   //       POWER DOWN (see defines above)
   void     powerDown(uint8_t pdMode = DAC8571_PD_LOW_POWER);
-  void     wakeUp(uint16_t value = DAC8571_VALUE_MIN);
+  void     wakeUp(uint16_t value = DAC8571_VALUE_00);
 
   //       ERROR HANDLING (see defines above)
   int      lastError();

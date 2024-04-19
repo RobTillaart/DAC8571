@@ -148,6 +148,7 @@ void DAC8571::setPercentage(float percentage)
   write(percentage * 655.35);
 }
 
+
 float DAC8571::getPercentage()
 {
   return read() * 0.0015259022;  //  === / 655.35;
@@ -156,7 +157,7 @@ float DAC8571::getPercentage()
 
 //////////////////////////////////////////////////////////
 //
-//  MODE PART
+//  WRITE MODE PART
 //
 void DAC8571::setWriteMode(uint8_t mode)
 {
@@ -203,6 +204,7 @@ void DAC8571::powerDown(uint8_t pdMode)
       pdMask  = 0xC000;
       break;
   }
+  //  specific power down code.
   _control = 0x11;
   write(pdMask);
 }
@@ -210,7 +212,7 @@ void DAC8571::powerDown(uint8_t pdMode)
 
 void DAC8571::wakeUp(uint16_t value)
 {
-  _control = 0x10;
+  setWriteMode(DAC8571_MODE_NORMAL);
   write(value);
 }
 
