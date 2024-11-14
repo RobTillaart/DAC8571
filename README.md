@@ -11,17 +11,18 @@
 
 # DAC8571
 
-Arduino library for DAC8571 I2C 16 bit DAC.
+Arduino library for DAC8571 I2C, 1 channel, 16 bit DAC.
 
 ## Description
 
 **Experimental**
 
-The DAC8571 is a small low-power, 16-bit voltage Power-On Reset to Zero output DAC.
+The DAC8571 is a small low-power, single channel, 16-bit voltage 
+Power-On Reset to Zero output DAC.
 
 The DAC8571 has one 16 bit DAC. The output value can be set from 0..65535.
-This results in a voltage which depends on a reference voltage Vref (datasheet).
-At power up it always will start with a value of zero.
+This results in a voltage which depends on a reference voltage Vref (see datasheet).
+At power up the channel always will start with a value of zero.
 
 The DAC8571 has a temporary register in which a value can be preloaded.
 This can be used to change the DAC at a later moment.
@@ -32,8 +33,16 @@ This can be used to change the DAC at a later moment.
 As said the library is experimental need to be tested with hardware.
 Feedback is always welcome, please open an issue.
 
+Kudos to Paul for first tests.
 
-#### Settling time
+
+### 3V3
+
+To connect the DAC8571 to a 3V3 device one need to use level converters.
+(Preliminary test Paul)
+
+
+### Settling time
 
 From datasheet page 24.
 
@@ -45,7 +54,7 @@ therefore, the update rate is limited by the I2C interface.
 
 ## I2C
 
-#### Address
+### Address
 
 The DAC8571 support 2 addresses by means of an A0 address pin.
 
@@ -60,7 +69,13 @@ and keep only one HIGH and remaining LOW to support many devices.
 This is not tested, feedback welcome.
 
 
-#### I2C performance
+### I2C pull ups
+
+To be able to reach 1 MHz (ESP32) the pull ups need to be fairly strong.
+Preliminary tests indicate that 2K work.
+
+
+### I2C performance
 
 Extend table, use output of **DAC8571_performance.ino**
 
@@ -68,7 +83,7 @@ Time in microseconds.
 array == write(array, length)
 Assumption all write modi have similar performance.
 
-Tested on Arduino UNO.
+Test Arduino UNO  - version 0.1.0
 
 |  Speed   |  function  |  time  |  notes  |
 |:--------:|:----------:|:------:|:-------:|
@@ -80,7 +95,7 @@ Tested on Arduino UNO.
 |  400000  |  read()    |        |
 
 
-Test ESP32 (Kudos to Paul)
+Test ESP32 (Kudos to Paul) - version 0.1.0
 
 |  Speed   |  write()  |  read()  |  write(array)  |  Notes  |
 |:--------:|:---------:|:--------:|:--------------:|:--------|
@@ -98,7 +113,7 @@ Test ESP32 (Kudos to Paul)
 
 
 
-#### I2C multiplexing
+### I2C multiplexing
 
 Sometimes you need to control more devices than possible with the default
 address range the device provides.
@@ -116,7 +131,7 @@ too if they are behind the multiplexer.
 - https://github.com/RobTillaart/TCA9548
 
 
-#### Related
+### Related
 
 - https://github.com/RobTillaart/AD5680 (18 bit DAC)
 - https://github.com/RobTillaart/DAC8550
@@ -124,6 +139,7 @@ too if they are behind the multiplexer.
 - https://github.com/RobTillaart/DAC8552
 - https://github.com/RobTillaart/DAC8554
 - https://github.com/RobTillaart/DAC8571
+- https://github.com/RobTillaart/DAC8574
 - https://github.com/RobTillaart/MCP_DAC
 - https://github.com/RobTillaart/MCP_ADC
 
@@ -134,7 +150,7 @@ too if they are behind the multiplexer.
 #include "DAC8571.h"
 ```
 
-#### Constructor
+### Constructor
 
 - **DAC8571(uint8_t address = 0x4C, TwoWire \*wire = &Wire)** constructor with I2C address.
 Default is 0x4C, optional set the WireN I2C bus.
@@ -145,21 +161,23 @@ Returns **true** if successful.
 - **uint8_t getAddress()** returns address set in constructor.
 
 
-#### Core
+### Core
 
 The DAC8571 has one 16 bit DAC. The output value can be set from 0..65535.
 
 - **bool write(uint16_t value)** writes a value 0..65535 to the DAC.
-NO default, user must explicit set value.
+No default, user must explicit set value.
 - **uint16_t lastWrite()** get last value written from cache (fast).
 - **uint16_t read()** get last written value from device.
 
 Percentage wrappers
-- **void setPercentage(float perc)** set 0.00 .. 100.00
-- **float getPercentage()** returns 0.0 .. 100.0
+
+- **bool setPercentage(float perc)** set 0.00 .. 100.00, 
+returns true on success.
+- **float getPercentage()** returns 0.0 .. 100.0 from cache.
 
 
-#### Write modi
+### Write modi
 
 The DAC8571 can be written in different modi (datasheet page 19).
 Not all modi are supported yet, these need testing.
@@ -181,7 +199,7 @@ Setting the mode will be applied for all writes until mode is changed.
 | other                    |  maps onto default **DAC8571_MODE_NORMAL**.
 
 
-#### Write multiple values - High speed mode.
+### Write multiple values - High speed mode.
 
 The maximum length depends on the internal I2C BUFFER of the board.
 For Arduino this is typical 32 bytes so it allows 14 values.
@@ -191,7 +209,7 @@ max 14 values in one I2C call.
 The last value written will be remembered in **lastWrite()**.
 
 
-#### Power Down mode
+### Power Down mode
 
 To investigate: Mixes also with broadcast ==> complex API.
 
@@ -200,16 +218,16 @@ To investigate: Mixes also with broadcast ==> complex API.
 
 See table 6, page 22 datasheet for details.
 
-|  Power Down Mode       |  Meaning  |
-|:-----------------------|:----------|
-|  DAC8571_PD_LOW_POWER  |  170 uA
-|  DAC8571_PD_FAST       |  250 uA
-|  DAC8571_PD_1_KOHM     |  200 nA, GND 1 KOhm
-|  DAC8571_PD_100_KOHM   |  200 nA, GND 100 KOhm
-|  DAC8571_PD_HI_Z       |  200 nA, open circuit, high impedance
+|  Power Down Mode       |  value  |  Meaning  |
+|:-----------------------|:-------:|:----------|
+|  DAC8571_PD_LOW_POWER  |    0    |  170 uA
+|  DAC8571_PD_FAST       |    1    |  250 uA
+|  DAC8571_PD_1_KOHM     |    2    |  200 nA, GND 1 KOhm
+|  DAC8571_PD_100_KOHM   |    3    |  200 nA, GND 100 KOhm
+|  DAC8571_PD_HI_Z       |    4    |  200 nA, open circuit, high impedance
 
 
-#### Broadcast mode
+### Broadcast mode
 
 **Not supported**
 
@@ -225,7 +243,7 @@ Three broadcast commands exists:
 
 
 
-#### Error codes
+### Error codes
 
 - **int lastError()** always check this value after a read() / write() 
 to see if it was DAC8571_OK.
@@ -249,18 +267,17 @@ After the call to **lastError()** the error value is reset to DAC8571_OK.
 
 #### Should
 
-- extend performance table
+- extend / fill performance table
 - replace magic numbers
+- derived classes **DAC7571** (12 bit) **DAC6571** (10 bit)?
 
 #### Could
 
 - add examples
-- investigate broadcast support
-- investigate known compatibles
-  - including SPI versions?
 
 #### Wont
 
+- investigate broadcast support
 
 ## Support
 

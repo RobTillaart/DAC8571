@@ -3,7 +3,7 @@
 //    FILE: DAC8571.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 2024-04-16
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: Arduino library for DAC8571 I2C 16 bit DAC.
 //     URL: https://github.com/RobTillaart/DAC8571
 
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define DAC8571_LIB_VERSION         (F("0.1.1"))
+#define DAC8571_LIB_VERSION         (F("0.1.2"))
 
 //  ERROR CODES
 #define DAC8571_OK                  0x00
@@ -67,7 +67,7 @@ public:
   bool     write(uint16_t * arr, uint8_t length);  //  returns true on success.
 
   //       PERCENTAGE WRAPPER
-  void     setPercentage(float percentage);
+  bool     setPercentage(float percentage);
   float    getPercentage();
 
   //       WRITE MODE (see defines above)
@@ -75,8 +75,8 @@ public:
   uint8_t  getWriteMode();  // 0..4  from last write (cached)
 
   //       POWER DOWN (see defines above)
-  void     powerDown(uint8_t pdMode = DAC8571_PD_LOW_POWER);
-  void     wakeUp(uint16_t value = DAC8571_VALUE_00);
+  bool     powerDown(uint8_t pdMode = DAC8571_PD_LOW_POWER);
+  bool     wakeUp(uint16_t value = DAC8571_VALUE_00);
 
   //       ERROR HANDLING (see defines above)
   int      lastError();
