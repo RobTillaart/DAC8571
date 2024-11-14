@@ -162,8 +162,7 @@ float DAC8571::getPercentage()
 //
 void DAC8571::setWriteMode(uint8_t mode)
 {
-  //  broadcast modi (3,4,5) not supported.
-  if (mode > DAC8571_MODE_WRITE_CACHE)
+  if (mode > DAC8571_MODE_BRCAST_0)
   {
     mode = DAC8571_MODE_NORMAL;
   }

@@ -180,7 +180,7 @@ returns true on success.
 ### Write modi
 
 The DAC8571 can be written in different modi (datasheet page 19).
-Not all modi are supported yet, these need testing.
+Not all modi are supported yet, these need investigation and testing.
 
 - **void setWriteMode(uint8_t mode = DAC8571_MODE_NORMAL)**
 - **uint8_t getWriteMode()**
@@ -193,10 +193,15 @@ Setting the mode will be applied for all writes until mode is changed.
 | DAC8571_MODE_STORE_CACHE |  store value in temporary register. Preparation for (2, 3 and 4)
 | DAC8571_MODE_NORMAL      |  update DAC with value written. **DEFAULT**.
 | DAC8571_MODE_WRITE_CACHE |  writes the temporary register to DAC, ignores new value.
-| DAC8571_MODE_BRCAST_0    |  broadcast update. **Not supported yet**. See below.
+| DAC8571_MODE_BRCAST_0    |  broadcast update. See below.
+| other                    |  maps onto default **DAC8571_MODE_NORMAL**.
 | DAC8571_MODE_BRCAST_1    |  broadcast update. **Not supported yet**. See below.
 | DAC8571_MODE_BRCAST_2    |  broadcast update. **Not supported yet**. See below.
-| other                    |  maps onto default **DAC8571_MODE_NORMAL**.
+
+
+With **DAC8571_MODE_STORE_CACHE** one can fill a buffer and the device will
+set that when a value is written in **DAC8571_MODE_WRITE_CACHE**.
+Especially useful for multichannel synchronuous update.
 
 
 ### Write multiple values - High speed mode.
@@ -207,6 +212,8 @@ For Arduino this is typical 32 bytes so it allows 14 values.
 - **void write(uint16_t arr[n], uint8_t length)** Writes a buffer with 
 max 14 values in one I2C call. 
 The last value written will be remembered in **lastWrite()**.
+
+This function can be used for a defined fast ramp up / down.
 
 
 ### Power Down mode
@@ -229,18 +236,15 @@ See table 6, page 22 datasheet for details.
 
 ### Broadcast mode
 
-**Not supported**
-
 Different ways possible, need to investigate API. (page 19)
 
 Three broadcast commands exists:
 
-|  Mode                   |  Meaning  |
-|:------------------------|:----------|
-|  DAC8571_MODE_BRCAST_0  | Load all devices from temporary register
-|  DAC8571_MODE_BRCAST_1  | Load all devices with data.
-|  DAC8571_MODE_BRCAST_2  | Power down all devices
-
+|  Mode                   |  Meaning                                 |  Notes  |
+|:------------------------|:-----------------------------------------|:--------|
+|  DAC8571_MODE_BRCAST_0  | Load all channels from temporary register |  
+|  DAC8571_MODE_BRCAST_1  | Load all channels with data.              |  not supported
+|  DAC8571_MODE_BRCAST_2  | Power down all devices                   |  not supported
 
 
 ### Error codes

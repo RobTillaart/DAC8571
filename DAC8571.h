@@ -25,7 +25,7 @@
 #define DAC8571_MODE_NORMAL         0x01
 #define DAC8571_MODE_WRITE_CACHE    0x02
 //  broadcast modes need more investigation
-#define DAC8571_MODE_BRCAST_0       0x03     //  not supported.
+#define DAC8571_MODE_BRCAST_0       0x03
 #define DAC8571_MODE_BRCAST_1       0x04     //  not supported.
 #define DAC8571_MODE_BRCAST_2       0x05     //  not supported.
 

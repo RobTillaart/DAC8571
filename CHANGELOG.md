@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - change return type **bool powerDown()**
 - change return type **bool wakeUp()**
 - change return type **bool setPercentage()**
-- change **getPercentage()** to return cached value. faster.
+- change **getPercentage()** to return cached value. faster than read().
+- enable **DAC8571_MODE_BRCAST_0** (experimental)
 - update keywords.txt
 - minor edits.
 
