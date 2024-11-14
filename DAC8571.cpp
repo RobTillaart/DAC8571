@@ -207,7 +207,7 @@ bool DAC8571::powerDown(uint8_t pdMode)
   }
   //  DAC8571_MODE_NORMAL + power down bit 7
   _control = (DAC8571_MODE_NORMAL << 4) + 0x01;
-  write(pdMask);
+  return write(pdMask);
 }
 
 
